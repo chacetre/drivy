@@ -170,11 +170,10 @@ function Update ()
 {
  for ( var i = 0 ; i < rentals.length ; i++)
 	{
-	var day = new Date();
+	var day = RecupDate(rentals[i].id);
 	var id = rentals[i].carId;
 	var distance = rentals[i].distance;
-	var returnDate = new Date (rentals[i].returnDate);
-	var startDate = new Date(rentals[i].pickupDate);
+	
 	var priceDay;
 	var priceKm = 0;
 	
@@ -185,8 +184,7 @@ function Update ()
 					   priceDay = cars[j].pricePerDay;
 					   priceKm = cars[j].pricePerKm;
 				}
-			}	
-		day = 1+ (returnDate - startDate )/(24*3600*1000) ;			
+			}		
 		rentals[i].price = distance * priceKm +  day* priceDay ;	
 	}
 }
@@ -195,10 +193,7 @@ function ReductionPrice()
 {
 	for ( var i = 0 ; i < rentals.length ; i++)
 	{
-		var day = new Date();
-		var returnDate = new Date (rentals[i].returnDate);
-		var startDate = new Date(rentals[i].pickupDate);
-		day = 1+ (returnDate - startDate )/(24*3600*1000) ;		
+		var day = RecupDate(rentals[i].id);
 		
 		if ( day > 1 && day <= 4)
 		{
@@ -222,11 +217,7 @@ function GiveCommission()
 {
 	for ( var i = 0 ; i < rentals.length ; i++)
 	{
-		var day = new Date();
-		var returnDate = new Date (rentals[i].returnDate);
-		var startDate = new Date(rentals[i].pickupDate);
-		day = 1+ (returnDate - startDate )/(24*3600*1000) ;	
-		
+		var day = RecupDate(rentals[i].id);		
 		var commission = Math.round(rentals[i].price * 0.3);
 				
 		rentals[i].commission.insurance = Math.round(commission *0.5);
@@ -241,26 +232,17 @@ function Accident()
 {
 	for ( var i = 0 ; i < rentals.length ; i++)
 	{
-		var day = new Date();
-		var returnDate = new Date (rentals[i].returnDate);
-		var startDate = new Date(rentals[i].pickupDate);
-		day = 1+ (returnDate - startDate )/(24*3600*1000) ;	
-		
+		var day = RecupDate(rentals[i].id);		
 		
 		if (rentals[i].options.deductibleReduction ==  true )		
 		{
-			rentals[i].price += 4*day + 150 ;
+			rentals[i].price += 4*day ;
 		}
-		else 
-		{
-			rentals[i].price += 800;
-		}
+		
 	}
 }
 
-
 function Paid()
-
 {
 	for ( var i = 0 ; i < actors.length ; i++)
 	{
@@ -269,7 +251,7 @@ function Paid()
 	var insurance = 0;
 	var assistance = 0 ;
 	var deductibleReduction = true ; 
-	var day = new Date();
+	var day = RecupDate(actors[i].rentalId);
 	
 		for ( var j = 0 ; j < rentals.length ; j++)
 		{
@@ -281,10 +263,6 @@ function Paid()
 				assistance = rentals[j].commission.assistance;
 				deductibleReduction = rentals[j].options.deductibleReduction;
 				
-				
-				var returnDate = new Date (rentals[i].returnDate);
-				var startDate = new Date(rentals[i].pickupDate);
-				day = 1+ (returnDate - startDate )/(24*3600*1000) ;	
 			}	
 			
 			for ( var x = 0 ; x < 5 ; x++)
@@ -329,12 +307,53 @@ function Paid()
 
 }
 
+function UpdateRentalData()
+{
+		for ( var i = 0 ; i < rentalModifications.length ; i++)
+		{
+			var rental = FindRental( rentalModifications[i].rentalId);
+			for ( var modif in rentalModifications[i] )
+			{
+				if ( modif != "rentalId" )
+				{
+					rental[modif] = rentalModifications[i][modif];
+				}
+			}
+					
+		}
+
+}
+
+function FindRental ( id )
+{
+	var tmp = rentals.length;
+	for ( var i = 0 ; i < tmp ; i++)
+	{
+			if ( id == rentals[i].id)
+			{
+			return rentals[i];
+			}
+	}
+	return ;
+}
+
+function RecupDate(id)
+{
+	var day = 0 ;
+	var rental = FindRental(id);
+	var returnDate = new Date (rental.returnDate);
+	var startDate = new Date(rental.pickupDate);
+	day = 1+ (returnDate - startDate )/(24*3600*1000) ;
+	return day ; 
+}
+
 
 Update();
 ReductionPrice();
 Accident();
 GiveCommission();
 Paid();
+UpdateRentalData();
 
 console.log(cars);
 console.log(rentals);
