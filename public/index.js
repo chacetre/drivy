@@ -169,7 +169,6 @@ var rentalModifications = [{
 }];
 
 function Update ()
-
 {
  for ( var i = 0 ; i < rentals.length ; i++)
 	{
@@ -194,7 +193,36 @@ function Update ()
 	}
 }
 
+function ReductionPrice()
+{
+	for ( var i = 0 ; i < rentals.length ; i++)
+	{
+		var day = new Date();
+		var returnDate = new Date (rentals[i].returnDate);
+		var startDate = new Date(rentals[i].pickupDate);
+		day = 1+ (returnDate - startDate )/(24*3600*1000) ;		
+		
+		if ( day > 1 && day <= 4)
+		{
+		 rentals[i].price = rentals[i].price - (rentals[i].price*0.1)
+		}
+		if ( day > 4 && day < 10)
+		{
+		 rentals[i].price = rentals[i].price - (rentals[i].price*0.3)
+		}
+		
+		if (  day > 10)
+		{
+		 rentals[i].price = rentals[i].price - (rentals[i].price*0.5)
+		}		
+	
+	}
+
+}
+
+
 Update();
+ReductionPrice();
 
 console.log(cars);
 console.log(rentals);
