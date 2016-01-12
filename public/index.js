@@ -22,6 +22,9 @@ var cars = [{
 //The `price` is updated from exercice 1
 //The `commission` is updated from exercice 3
 //The `options` is useful from exercice 4
+
+
+
 var rentals = [{
   'id': '1-pb-92',
   'driver': {
@@ -35,7 +38,7 @@ var rentals = [{
   'options': {
     'deductibleReduction': false
   },
-  'price': 0,
+  'price': 2,
   'commission': {
     'insurance': 0,
     'assistance': 0,
@@ -164,6 +167,34 @@ var rentalModifications = [{
   'rentalId': '3-sa-92',
   'pickupDate': '2015-12-05'
 }];
+
+function Update ()
+
+{
+ for ( var i = 0 ; i < rentals.length ; i++)
+	{
+	var day = new Date();
+	var id = rentals[i].carId;
+	var distance = rentals[i].distance;
+	var returnDate = new Date (rentals[i].returnDate);
+	var startDate = new Date(rentals[i].pickupDate);
+	var priceDay;
+	var priceKm = 0;
+	
+			for ( var j =0; j < cars.length ; j++)
+			{
+				if ( cars[j].id == id )
+				{
+					   priceDay = cars[j].pricePerDay;
+					   priceKm = cars[j].pricePerKm;
+				}
+			}	
+		day = 1+ (returnDate - startDate )/(24*3600*1000) ;			
+		rentals[i].price = distance * priceKm +  day* priceDay ;	
+	}
+}
+
+Update();
 
 console.log(cars);
 console.log(rentals);
