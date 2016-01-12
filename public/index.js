@@ -219,7 +219,6 @@ function ReductionPrice()
 }
 
 function GiveCommission()
-
 {
 	for ( var i = 0 ; i < rentals.length ; i++)
 	{
@@ -234,13 +233,34 @@ function GiveCommission()
 		rentals[i].commission.assistance = day;
 		rentals[i].commission.drivy = commission - rentals[i].commission.insurance -rentals[i].commission.assistance;
 		
-	
 	}
 		
 }
 
+function Accident()
+{
+	for ( var i = 0 ; i < rentals.length ; i++)
+	{
+		var day = new Date();
+		var returnDate = new Date (rentals[i].returnDate);
+		var startDate = new Date(rentals[i].pickupDate);
+		day = 1+ (returnDate - startDate )/(24*3600*1000) ;	
+		
+		
+		if (rentals[i].options.deductibleReduction ==  true )		
+		{
+			rentals[i].price += 4*day + 150 ;
+		}
+		else 
+		{
+			rentals[i].price += 800;
+		}
+	}
+}
+
 Update();
 ReductionPrice();
+Accident();
 GiveCommission();
 
 console.log(cars);
