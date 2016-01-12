@@ -23,8 +23,6 @@ var cars = [{
 //The `commission` is updated from exercice 3
 //The `options` is useful from exercice 4
 
-
-
 var rentals = [{
   'id': '1-pb-92',
   'driver': {
@@ -206,7 +204,7 @@ function ReductionPrice()
 		{
 		 rentals[i].price = rentals[i].price - (rentals[i].price*0.1)
 		}
-		if ( day > 4 && day < 10)
+		if ( day > 4 && day <= 10)
 		{
 		 rentals[i].price = rentals[i].price - (rentals[i].price*0.3)
 		}
@@ -220,9 +218,30 @@ function ReductionPrice()
 
 }
 
+function GiveCommission()
+
+{
+	for ( var i = 0 ; i < rentals.length ; i++)
+	{
+		var day = new Date();
+		var returnDate = new Date (rentals[i].returnDate);
+		var startDate = new Date(rentals[i].pickupDate);
+		day = 1+ (returnDate - startDate )/(24*3600*1000) ;	
+		
+		var commission = Math.round(rentals[i].price * 0.3);
+				
+		rentals[i].commission.insurance = Math.round(commission *0.5);
+		rentals[i].commission.assistance = day;
+		rentals[i].commission.drivy = commission - rentals[i].commission.insurance -rentals[i].commission.assistance;
+		
+	
+	}
+		
+}
 
 Update();
 ReductionPrice();
+GiveCommission();
 
 console.log(cars);
 console.log(rentals);
