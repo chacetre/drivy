@@ -258,10 +258,83 @@ function Accident()
 	}
 }
 
+
+function Paid()
+
+{
+	for ( var i = 0 ; i < actors.length ; i++)
+	{
+	var price = 0;
+	var commission = 0;
+	var insurance = 0;
+	var assistance = 0 ;
+	var deductibleReduction = true ; 
+	var day = new Date();
+	
+		for ( var j = 0 ; j < rentals.length ; j++)
+		{
+			if ( actors[i].rentalId == rentals[j].id ) 
+			{
+				price = rentals[j].price;
+				commission =  rentals[j].commission.insurance +   rentals[j].commission.drivy +  rentals[j].commission.assistance;		
+				insurance =  rentals[j].commission.insurance;
+				assistance = rentals[j].commission.assistance;
+				deductibleReduction = rentals[j].options.deductibleReduction;
+				
+				
+				var returnDate = new Date (rentals[i].returnDate);
+				var startDate = new Date(rentals[i].pickupDate);
+				day = 1+ (returnDate - startDate )/(24*3600*1000) ;	
+			}	
+			
+			for ( var x = 0 ; x < 5 ; x++)
+			{
+				if ( actors[i].payment[x].who == "driver")
+				{
+					actors[i].payment[x].amount = price ; 
+				}
+		
+				if ( actors[i].payment[x].who == "owner")
+				{
+					actors[i].payment[x].amount = price - commission;
+				}
+		
+				if ( actors[i].payment[x].who == "insurance")
+				{
+					actors[i].payment[x].amount = insurance;
+				}
+		
+				if ( actors[i].payment[x].who == "assistance")
+				{
+					actors[i].payment[x].amount = assistance;
+				}		
+				
+				if ( actors[i].payment[x].who == "drivy")
+				{
+						if ( deductibleReduction == true )
+						{
+							actors[i].payment[x].amount = 150 + 4 *day + commission - insurance - assistance ;
+						}
+						else 
+						{
+							actors[i].payment[x].amount = 800 + commission - insurance - assistance ;
+						}
+					
+				}							
+			}			
+			
+		}
+		
+	}
+
+}
+
+
 Update();
 ReductionPrice();
 Accident();
 GiveCommission();
+Paid();
 
 console.log(cars);
 console.log(rentals);
